@@ -47,7 +47,7 @@ ComplexNumber* ComplexSum(ComplexNumber* a, ComplexNumber* b)
 double ComplexAbs(ComplexNumber* a)
 {
 	double res;
-	res = sqrt(a->real**2+a->imaginary**2);
+	res = sqrt(a->real*a->real+a->imaginary*a->imaginary);
 	return res;
 }
 
