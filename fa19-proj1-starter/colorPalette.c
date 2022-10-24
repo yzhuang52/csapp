@@ -38,9 +38,9 @@ int P3colorpalette(char* colorfile, int width, int heightpercolor, char* outputf
 		uint8_t* linecolor = *(colormap+i);
 		for(int j=0; j<heightpercolor; j++){
 			for(int k=0; k<width-1; k++){
-				fprintf(output, "%hhu, %hhu, %hhu", *linecolor, *(linecolor+1), *(linecolor+2));
+				fprintf(output, "%hhu %hhu %hhu ", *linecolor, *(linecolor+1), *(linecolor+2));
 			}
-			fprintf(output, "%hhu, %hhu, %hhu", *linecolor, *(linecolor+1), *(linecolor+2));
+			fprintf(output, "%hhu %hhu %hhu\n", *linecolor, *(linecolor+1), *(linecolor+2));
 		}
 	}
 	fclose(output);
@@ -64,9 +64,9 @@ int P6colorpalette(char* colorfile, int width, int heightpercolor, char* outputf
 	}
 	int* colorcount = (int*)malloc(sizeof(int));
 	uint8_t** colormap = FileToColorMap(colorfile, colorcount);
-	fprintf(output, "P6 %d %d 255\n", width, heightpercolor*colorcount);
+	fprintf(output, "P6 %d %d 255\n", width, heightpercolor*(*colorcount));
 	for(int i=0; i<*colorcount; i++){
-		uint8_t linecolor = *(colormap+i);
+		uint8_t* linecolor = *(colormap+i);
 		for(int j=0; j<heightpercolor; j++){
 			for(int k=0; k<width; k++){
 				fwrite(linecolor, 1, 3, output);
