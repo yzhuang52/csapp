@@ -19,14 +19,66 @@ void usage(char* argv[])
 //Creates a color palette image for the given colorfile in outputfile. Width and heightpercolor dictates the dimensions of each color. Output should be in P3 format
 int P3colorpalette(char* colorfile, int width, int heightpercolor, char* outputfile)
 {
-	//YOUR CODE HERE
+	if(width<1||heightpercolor<1){
+		return 0;
+	}
+	FILE* output = fopen(outputfile, "w");
+	if(output==NULL){
+		return 1;
+	}
+	uint8_t** colormap;
+	int* colorcount = (int*)malloc(sizeof(int));
+	colormap = FileToColorMap(colorfile, colorcount);
+	if(colormap==NULL){
+		free(colorcount);
+		return 1;
+	}
+	fprintf(output, "P3 %d %d 255\n", width, heightpercolor*(*colorcount));
+	for(int i=0; i<(*colorcount); i++){
+		uint8_t* linecolor = *(colormap+i);
+		for(int j=0; j<heightpercolor; j++){
+			for(int k=0; k<width-1; k++){
+				fprintf(output, "%hhu, %hhu, %hhu", *linecolor, *(linecolor+1), *(linecolor+2));
+			}
+			fprintf(output, "%hhu, %hhu, %hhu", *linecolor, *(linecolor+1), *(linecolor+2));
+		}
+	}
+	fclose(output);
+	for(int i=0; i<(*colorcount); i++){
+		free(*(colormap+i));
+	}
+	free(colormap);
+	free(colorcount);
 	return 0;
 }
 
 //Same as above, but with P6 format
 int P6colorpalette(char* colorfile, int width, int heightpercolor, char* outputfile)
 {
-	//YOUR CODE HERE
+	if(width<1||heightpercolor<1){
+		return 0;
+	}
+	FILE* output = fopen(outputfile, "w");
+	if(output==NULL){
+		return 0;
+	}
+	int* colorcount = (int*)malloc(sizeof(int));
+	uint8_t** colormap = FileToColorMap(colorfile, colorcount);
+	fprintf(output, "P6 %d %d 255\n", width, heightpercolor*colorcount);
+	for(int i=0; i<*colorcount; i++){
+		uint8_t linecolor = *(colormap+i);
+		for(int j=0; j<heightpercolor; j++){
+			for(int k=0; k<width; k++){
+				fwrite(linecolor, 1, 3, output);
+			}
+		}
+	}
+	fclose(output);
+	for(int i=0; i<*colorcount; i++){
+		free(*(colormap+i));
+	}
+	free(colormap);
+	free(colorcount);
 	return 0;
 }
 
